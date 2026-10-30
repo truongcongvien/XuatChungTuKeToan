@@ -179,7 +179,7 @@ namespace XuatChungTuKeToan
             // Phần kết (xác thực và trách nhiệm pháp lý)
 
             currentRow += 2;
-            ws.Cells["A" + currentRow].PutValue("- Tổng số tiền (viết bằng chữ): ");
+            ws.Cells["A" + currentRow].PutValue("- Tổng số tiền (viết bằng chữ): " + Libraries.NumberToVietnameseWords(tongThanhTien) + " đồng.");
             ws.Cells.CreateRange("A" + currentRow, "H" + currentRow).Merge();
 
             currentRow++;
