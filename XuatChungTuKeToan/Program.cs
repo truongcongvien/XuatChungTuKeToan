@@ -160,8 +160,7 @@ namespace XuatChungTuKeToan
             ws.Cells.CreateRange("B" + currentRow, "G" + currentRow).ApplyStyle(styles.CenterBold, new StyleFlag { All = true });
 
             // Tính tổng cột Thành tiền
-            object sumThanhTien = dt.Compute("SUM([ThanhTien])", string.Empty);
-            decimal tongThanhTien = (sumThanhTien == DBNull.Value) ? 0 : Convert.ToDecimal(sumThanhTien);
+            decimal tongThanhTien = dt.Compute("SUM([ThanhTien])", "") is decimal val ? val : 0m;
 
             ws.Cells["H" + currentRow].PutValue(tongThanhTien);
             ws.Cells["H" + currentRow].SetStyle(styles.TongTien);
@@ -254,14 +253,14 @@ namespace XuatChungTuKeToan
         {
             DataTable dt = new DataTable();
 
-            dt.Columns.Add("stt", typeof(int));
-            dt.Columns.Add("tensp", typeof(string));
-            dt.Columns.Add("maso", typeof(string));
-            dt.Columns.Add("dvt", typeof(string));
-            dt.Columns.Add("slct", typeof(double));
-            dt.Columns.Add("sltn", typeof(double));
-            dt.Columns.Add("dongia", typeof(double));
-            dt.Columns.Add("thanhtien", typeof(double));
+            dt.Columns.Add("Stt", typeof(int));
+            dt.Columns.Add("TenSanPham", typeof(string));
+            dt.Columns.Add("MaSo", typeof(string));
+            dt.Columns.Add("DonViTinh", typeof(string));
+            dt.Columns.Add("SoLuongChungTu", typeof(decimal));
+            dt.Columns.Add("SoLuongThucNhap", typeof(decimal));
+            dt.Columns.Add("DonGia", typeof(decimal));
+            dt.Columns.Add("ThanhTien", typeof(decimal));
 
             object[] sampleData = new object[]
             {
