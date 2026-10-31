@@ -15,7 +15,7 @@ namespace XuatChungTuKeToan
             decimal absNumber = Math.Floor(Math.Abs(number));
 
             // Xử lý riêng trường hợp số 0
-            if (absNumber == 0)
+            if (absNumber == 0m)
                 return "Không";
 
             string result = "";
@@ -27,9 +27,9 @@ namespace XuatChungTuKeToan
                 decimal currentTyGroup = absNumber % 1_000_000_000m;
                 absNumber = Math.Floor(absNumber / 1_000_000_000m);
 
-                if (currentTyGroup > 0)
+                if (currentTyGroup > 0m)
                 {
-                    string groupText = ReadGroupUnderBillion(currentTyGroup, absNumber > 0);
+                    string groupText = ReadGroupUnderBillion(currentTyGroup, absNumber > 0m);
 
                     // Ghép đuôi "tỷ" tương ứng với cấp độ (tỷ, tỷ tỷ,...)
                     string tySuffix = "";
@@ -42,13 +42,13 @@ namespace XuatChungTuKeToan
                 }
 
                 billionLevel++;
-            } while (absNumber > 0);
+            } while (absNumber > 0m);
 
             // Chuẩn hóa khoảng trắng dư thừa
             result = Regex.Replace(result.Trim(), @"\s+", " ");
 
             // Thêm từ "Âm" nếu là số âm
-            if (number < 0)
+            if (number < 0m)
             {
                 result = "âm " + result;
             }
@@ -75,7 +75,7 @@ namespace XuatChungTuKeToan
 
                 if (hundreds > 0 || tens > 0 || ones > 0)
                 {
-                    bool hasHigher = number > 0 || hasHigherBlock;
+                    bool hasHigher = number > 0m || hasHigherBlock;
                     string blockText = ReadTriple(hundreds, tens, ones, hasHigher);
                     string unit = units[blockIndex];
 
@@ -83,7 +83,7 @@ namespace XuatChungTuKeToan
                 }
 
                 blockIndex++;
-            } while (number > 0);
+            } while (number > 0m);
 
             return result;
         }

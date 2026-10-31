@@ -16,6 +16,7 @@ namespace XuatChungTuKeToan
 
             wb.Worksheets.RemoveAt(0); // Xóa sheet mặc định
             XuatPhieuNhapKho(wb, dt); // Xuất Phiếu nhập kho
+            XuatPhieuThu(wb, 1200000); // Xuất Phiếu thu
 
             string filePath = @"ChungTuKeToan.xlsx";
             wb.Save(filePath);
@@ -40,10 +41,10 @@ namespace XuatChungTuKeToan
 
             // Phần mở đầu (thông tin chung)
 
-            ws.Cells["A1"].PutValue("Đơn vị: ");
+            ws.Cells["A1"].PutValue("Đơn vị: ...");
             ws.MergeAndStyle("A1", "D1", styles.Bold);
 
-            ws.Cells["A2"].PutValue("Bộ phận: ");
+            ws.Cells["A2"].PutValue("Bộ phận: ...");
             ws.MergeAndStyle("A2", "D2", styles.Bold);
 
             ws.Cells["E1"].PutValue("Mẫu số 01 - VT");
@@ -55,25 +56,25 @@ namespace XuatChungTuKeToan
             ws.Cells["A5"].PutValue("PHIẾU NHẬP KHO");
             ws.MergeAndStyle("A5", "H5", styles.Title);
 
-            ws.Cells["A6"].PutValue("Ngày " + "tháng " + "năm ");
+            ws.Cells["A6"].PutValue("Ngày ..." + " tháng ..." + " năm ...");
             ws.MergeAndStyle("A6", "H6", styles.CenterItalic);
 
-            ws.Cells["G7"].PutValue("Số: ");
+            ws.Cells["G7"].PutValue("Số: ...");
             ws.Cells.CreateRange("G7", "H7").Merge();
 
-            ws.Cells["G8"].PutValue("Nợ: ");
+            ws.Cells["G8"].PutValue("Nợ: ...");
             ws.Cells.CreateRange("G8", "H8").Merge();
 
-            ws.Cells["G9"].PutValue("Có: ");
+            ws.Cells["G9"].PutValue("Có: ...");
             ws.Cells.CreateRange("G9", "H9").Merge();
 
-            ws.Cells["A10"].PutValue("- Họ và tên người giao: ");
+            ws.Cells["A10"].PutValue("- Họ và tên người giao: ...");
             ws.Cells.CreateRange("A10", "H10").Merge();
 
-            ws.Cells["A11"].PutValue("- Theo " + "số " + "ngày " + "tháng " + "năm " + "của ");
+            ws.Cells["A11"].PutValue("- Theo ..." + " số ..." + " ngày ..." + " tháng ..." + " năm ..." + " của ...");
             ws.Cells.CreateRange("A11", "H11").Merge();
 
-            ws.Cells["A12"].PutValue("- Nhập tại kho: " + "địa điểm ");
+            ws.Cells["A12"].PutValue("- Nhập tại kho: ..." + " địa điểm ...");
             ws.Cells.CreateRange("A12", "H12").Merge();
 
             // Phần nội dung (chi tiết nội dung nghiệp vụ)
@@ -176,15 +177,15 @@ namespace XuatChungTuKeToan
                 tableRange.SetTableBorders();
             }
 
-            // Phần kết (xác thực và trách nhiệm pháp lý)
-
             currentRow += 2;
             ws.Cells["A" + currentRow].PutValue("- Tổng số tiền (viết bằng chữ): " + Libraries.NumberToVietnameseWords(tongThanhTien) + " đồng.");
             ws.Cells.CreateRange("A" + currentRow, "H" + currentRow).Merge();
 
             currentRow++;
-            ws.Cells["A" + currentRow].PutValue("- Số chứng từ gốc kèm theo: ");
+            ws.Cells["A" + currentRow].PutValue("- Số chứng từ gốc kèm theo: ...");
             ws.Cells.CreateRange("A" + currentRow, "H" + currentRow).Merge();
+
+            // Phần kết (xác thực và trách nhiệm pháp lý)
 
             currentRow += 2;
             ws.Cells["G" + currentRow].PutValue("Ngày ... tháng ... năm ...");
@@ -231,7 +232,7 @@ namespace XuatChungTuKeToan
             ws.PageSetup.PrintTitleColumns = "";
             // Khổ giấy & Hướng in
             ws.PageSetup.PaperSize = PaperSizeType.PaperA4;
-            ws.PageSetup.Orientation = PageOrientationType.Landscape; // Khổ dọc
+            ws.PageSetup.Orientation = PageOrientationType.Portrait; // Khổ dọc
             // Căn lề an toàn cho máy in (Đơn vị inch)
             ws.PageSetup.LeftMarginInch = 0.3;
             ws.PageSetup.RightMarginInch = 0.3;
@@ -301,6 +302,124 @@ namespace XuatChungTuKeToan
                 dt.Rows.Add(row);
             }
             return dt;
+        }
+        #endregion
+        #region "XuatPhieuThu"
+        static void XuatPhieuThu(Workbook wb, decimal soTien)
+        {
+            Worksheet ws = wb.Worksheets.Add("PhieuThu");
+
+            // Khai báo đối tượng để sử dụng các thuộc tính style được định nghĩa
+            var styles = new ExcelReportStyles(wb);
+
+            // Phần mở đầu (thông tin chung)
+
+            ws.Cells["A1"].PutValue("Đơn vị: ...");
+            ws.MergeAndStyle("A1", "E1", styles.Bold);
+
+            ws.Cells["A2"].PutValue("Địa chỉ: ...");
+            ws.MergeAndStyle("A2", "E2", styles.Bold);
+
+            ws.Cells["F1"].PutValue("Mẫu số 01 - TT");
+            ws.MergeAndStyle("F1", "J1", styles.CenterBold);
+
+            ws.Cells["F2"].PutValue("(Kèm theo Thông tư số 99/2025/TT-BTC\nngày 27 tháng 10 năm 2025 của Bộ trưởng Bộ Tài chính)");
+            ws.MergeAndStyle("F2", "J3", styles.CenterItalic);
+
+            ws.Cells["A5"].PutValue("PHIẾU THU");
+            ws.MergeAndStyle("A5", "J5", styles.Title);
+
+            ws.Cells["A6"].PutValue("Ngày ..." + " tháng ..." + " năm ...");
+            ws.MergeAndStyle("A6", "J6", styles.CenterItalic);
+
+            ws.Cells["I7"].PutValue("Quyển số: ...");
+            ws.Cells.CreateRange("I7", "J7").Merge();
+
+            ws.Cells["I8"].PutValue("Số: ...");
+            ws.Cells.CreateRange("I8", "J8").Merge();
+
+            ws.Cells["I9"].PutValue("Nợ: ...");
+            ws.Cells.CreateRange("I9", "J9").Merge();
+
+            ws.Cells["I10"].PutValue("Có: ...");
+            ws.Cells.CreateRange("I10", "J10").Merge();
+
+            ws.Cells["A12"].PutValue("- Họ và tên người nộp tiền: ...");
+            ws.Cells.CreateRange("A12", "J12").Merge();
+
+            ws.Cells["A14"].PutValue("- Địa chỉ: ...");
+            ws.Cells.CreateRange("A14", "J14").Merge();
+
+            ws.Cells["A16"].PutValue("- Lý do nộp: ...");
+            ws.Cells.CreateRange("A16", "J16").Merge();
+
+            ws.Cells["A18"].PutValue("- Số tiền: " + $"{soTien:N0}đ" + " (Viết bằng chữ): " + Libraries.NumberToVietnameseWords(soTien) + " đồng.");
+            ws.Cells.CreateRange("A18", "J18").Merge();
+
+            ws.Cells["A20"].PutValue("- Kèm theo: ..." + " Chứng từ gốc: ...");
+            ws.Cells.CreateRange("A20", "J20").Merge();
+
+            // Phần kết (xác thực và trách nhiệm pháp lý)
+
+            ws.Cells["G22"].PutValue("Ngày ... tháng ... năm ...");
+            ws.MergeAndStyle("G22", "J22", styles.CenterItalic);
+
+            ws.Cells["A24"].PutValue("Giám đốc");
+            ws.MergeAndStyle("A24", "B24", styles.CenterBold);
+
+            ws.Cells["C24"].PutValue("Kế toán trưởng");
+            ws.MergeAndStyle("C24", "D24", styles.CenterBold);
+
+            ws.Cells["E24"].PutValue("Người nộp tiền");
+            ws.MergeAndStyle("E24", "F24", styles.CenterBold);
+
+            ws.Cells["G24"].PutValue("Người lập phiếu");
+            ws.MergeAndStyle("G24", "H24", styles.CenterBold);
+
+            ws.Cells["I24"].PutValue("Thủ quỹ");
+            ws.MergeAndStyle("I24", "J24", styles.CenterBold);
+
+            ws.Cells["A25"].PutValue("(Ký, họ tên, đóng dấu)");
+            ws.MergeAndStyle("A25", "B25", styles.CenterItalic);
+
+            ws.Cells["C25"].PutValue("(Ký, họ tên)");
+            ws.MergeAndStyle("C25", "D25", styles.CenterItalic);
+
+            ws.Cells["E25"].PutValue("(Ký, họ tên)");
+            ws.MergeAndStyle("E25", "F25", styles.CenterItalic);
+
+            ws.Cells["G25"].PutValue("(Ký, họ tên)");
+            ws.MergeAndStyle("G25", "H25", styles.CenterItalic);
+
+            ws.Cells["I25"].PutValue("(Ký, họ tên)");
+            ws.MergeAndStyle("I25", "J25", styles.CenterItalic);
+
+            // Đặt độ rộng cột từ A -> H
+            ws.SetColumnWidths(0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
+            // Tự động căn chỉnh chiều cao dòng
+            ws.AutoFitAllRows();
+
+            // Page setup
+            // Tiêu đề lặp lại khi sang trang (Dòng 14 -> 16 gồm Tiêu đề bảng + Dòng kí tự)
+            ws.PageSetup.PrintTitleRows = "$14:$16";
+            ws.PageSetup.PrintTitleColumns = "";
+            // Khổ giấy & Hướng in
+            ws.PageSetup.PaperSize = PaperSizeType.PaperA4;
+            ws.PageSetup.Orientation = PageOrientationType.Portrait; // Khổ dọc
+            // Căn lề an toàn cho máy in (Đơn vị inch)
+            ws.PageSetup.LeftMarginInch = 0.3;
+            ws.PageSetup.RightMarginInch = 0.3;
+            ws.PageSetup.TopMarginInch = 0.4;
+            ws.PageSetup.BottomMarginInch = 0.5;
+            ws.PageSetup.HeaderMarginInch = 0.2;
+            ws.PageSetup.FooterMarginInch = 0.2;
+            // Căn giữa trang in theo chiều ngang
+            ws.PageSetup.CenterHorizontally = true;
+            // Khóa vừa 1 trang chiều rộng, chiều dài cuộn tự do
+            ws.PageSetup.FitToPagesWide = 1;
+            ws.PageSetup.FitToPagesTall = 0;
+            // Đánh số trang góc dưới bên phải (Ví dụ: Trang: 1/3)
+            ws.PageSetup.SetFooter(2, "Trang: &P/&N");
         }
         #endregion
     }
