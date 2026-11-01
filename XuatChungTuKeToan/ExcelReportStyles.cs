@@ -4,6 +4,7 @@ namespace XuatChungTuKeToan
 {
     public class ExcelReportStyles
     {
+        public Style Default { get; private set; }
         public Style Center { get; private set; }
         public Style Bold { get; private set; }
         public Style CenterBold { get; private set; }
@@ -14,16 +15,16 @@ namespace XuatChungTuKeToan
         public Style TongTien { get; private set; }
 
         public ExcelReportStyles(Workbook wb)
-        {
+        {                       
             // Áp dụng style mặc định cho toàn bộ workbook
-            Style defaultStyle = wb.DefaultStyle;
-            defaultStyle.Font.Name = "Times New Roman";
-            defaultStyle.Font.Size = 11;
-            defaultStyle.HorizontalAlignment = TextAlignmentType.Left;
-            defaultStyle.VerticalAlignment = TextAlignmentType.Center;
-            defaultStyle.IsTextWrapped = true;
+            Default = wb.DefaultStyle;
+            Default.Font.Name = "Times New Roman";
+            Default.Font.Size = 11;
+            Default.HorizontalAlignment = TextAlignmentType.Left;
+            Default.VerticalAlignment = TextAlignmentType.Center;
+            Default.IsTextWrapped = true;
 
-            wb.DefaultStyle = defaultStyle;
+            wb.DefaultStyle = Default;
 
             // Khai báo style con (kế thừa tự động từ DefaultStyle)
             Center = wb.CreateStyle();
