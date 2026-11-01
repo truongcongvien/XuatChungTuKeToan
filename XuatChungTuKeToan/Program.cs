@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using Aspose.Cells;
 
 namespace XuatChungTuKeToan
@@ -10,13 +11,16 @@ namespace XuatChungTuKeToan
         {
             DataTable dt = new DataTable();
 
-            dt = PhieuNhapKhoDataForTesting();
-
             Workbook wb = new Workbook();
-
             wb.Worksheets.RemoveAt(0); // Xóa sheet mặc định
+
+            dt = PhieuNhapKhoDataForTesting();
             XuatPhieuNhapKho(wb, dt); // Xuất Phiếu nhập kho
+
             XuatPhieuThu(wb, 1200000); // Xuất Phiếu thu
+
+            dt = GiayThanhToanTienTamUngDataForTesting();
+            XuatGiayThanhToanTienTamUng(wb, dt);
 
             string filePath = @"ChungTuKeToan.xlsx";
             wb.Save(filePath);
@@ -80,7 +84,7 @@ namespace XuatChungTuKeToan
             // Phần nội dung (chi tiết nội dung nghiệp vụ)
 
             // Tiêu đề bảng
-            int titleRow = 13; // Dòng bắt đầu tiêu đề bảng (index: 13 - tương ứng dòng 14 trong Excel
+            int titleRow = 13; // Dòng bắt đầu tiêu đề bảng (index: 13 - tương ứng dòng 14 trong Excel)
 
             ws.Cells["A14"].PutValue("STT");
             ws.MergeAndStyle("A14", "A15", styles.CenterBold);
@@ -136,12 +140,10 @@ namespace XuatChungTuKeToan
             int currentRow = startRow + totalRows; // Dòng hiện tại (dòng bắt đầu đổ dữ liệu + Tổng số dòng của DataTable)
 
             // Áp dụng Style theo từng cột cho vùng dữ liệu từ dòng bắt đầu đổ dữ liệu (startRow)
-            ws.SetColumnStyles(
-                startRow,
-                totalRows,
+            ws.SetColumnStyles(startRow, totalRows,
                 // Mảng style truyền trực tiếp theo thứ tự cột:
                 styles.Center,      // Cột A (STT)
-                null,               // Cột B (Tên SP)
+                styles.Default,      // Cột B (Tên SP)
                 styles.Center,      // Cột C (Mã số)
                 styles.Center,      // Cột D (ĐVT)
                 styles.Number2,     // Cột 1 (SLCT)
@@ -222,7 +224,7 @@ namespace XuatChungTuKeToan
             ws.MergeAndStyle("G" + currentRow, "H" + currentRow, styles.CenterItalic);
 
             // Đặt độ rộng cột từ A -> H
-            ws.SetColumnWidths(0, 8, 35, 12, 10, 12, 12, 15, 18);
+            ws.SetColumnWidths(startCol, 8, 35, 12, 10, 12, 12, 15, 18);
             // Tự động căn chỉnh chiều cao dòng
             ws.AutoFitAllRows();
 
@@ -252,7 +254,7 @@ namespace XuatChungTuKeToan
         #region "PhieuNhapKhoDataForTesting"
         private static DataTable PhieuNhapKhoDataForTesting()
         {
-            DataTable dt = new DataTable();
+            DataTable dt = new DataTable("PhieuXuatKho");
 
             dt.Columns.Add("Stt", typeof(int));
             dt.Columns.Add("TenSanPham", typeof(string));
@@ -315,93 +317,86 @@ namespace XuatChungTuKeToan
             // Phần mở đầu (thông tin chung)
 
             ws.Cells["A1"].PutValue("Đơn vị: ...");
-            ws.MergeAndStyle("A1", "E1", styles.Bold);
+            ws.MergeAndStyle("A1", "B1", styles.Bold);
 
             ws.Cells["A2"].PutValue("Địa chỉ: ...");
-            ws.MergeAndStyle("A2", "E2", styles.Bold);
+            ws.MergeAndStyle("A2", "B3", styles.Bold);
 
-            ws.Cells["F1"].PutValue("Mẫu số 01 - TT");
-            ws.MergeAndStyle("F1", "J1", styles.CenterBold);
+            ws.Cells["C1"].PutValue("Mẫu số 01 - TT");
+            ws.MergeAndStyle("C1", "E1", styles.CenterBold);
 
-            ws.Cells["F2"].PutValue("(Kèm theo Thông tư số 99/2025/TT-BTC\nngày 27 tháng 10 năm 2025 của Bộ trưởng Bộ Tài chính)");
-            ws.MergeAndStyle("F2", "J3", styles.CenterItalic);
+            ws.Cells["C2"].PutValue("(Kèm theo Thông tư số 99/2025/TT-BTC\nngày 27 tháng 10 năm 2025 của Bộ trưởng Bộ Tài chính)");
+            ws.MergeAndStyle("C2", "E3", styles.CenterItalic);
 
             ws.Cells["A5"].PutValue("PHIẾU THU");
-            ws.MergeAndStyle("A5", "J5", styles.Title);
+            ws.MergeAndStyle("A5", "E5", styles.Title);
 
             ws.Cells["A6"].PutValue("Ngày ..." + " tháng ..." + " năm ...");
-            ws.MergeAndStyle("A6", "J6", styles.CenterItalic);
+            ws.MergeAndStyle("A6", "E6", styles.CenterItalic);
 
-            ws.Cells["I7"].PutValue("Quyển số: ...");
-            ws.Cells.CreateRange("I7", "J7").Merge();
-
-            ws.Cells["I8"].PutValue("Số: ...");
-            ws.Cells.CreateRange("I8", "J8").Merge();
-
-            ws.Cells["I9"].PutValue("Nợ: ...");
-            ws.Cells.CreateRange("I9", "J9").Merge();
-
-            ws.Cells["I10"].PutValue("Có: ...");
-            ws.Cells.CreateRange("I10", "J10").Merge();
+            ws.Cells["E7"].PutValue("Quyển số: ...");
+            ws.Cells["E8"].PutValue("Số: ...");
+            ws.Cells["E9"].PutValue("Nợ: ...");
+            ws.Cells["E10"].PutValue("Có: ...");
 
             ws.Cells["A12"].PutValue("- Họ và tên người nộp tiền: ...");
-            ws.Cells.CreateRange("A12", "J12").Merge();
+            ws.Cells.CreateRange("A12", "E12").Merge();
 
             ws.Cells["A14"].PutValue("- Địa chỉ: ...");
-            ws.Cells.CreateRange("A14", "J14").Merge();
+            ws.Cells.CreateRange("A14", "E14").Merge();
 
             ws.Cells["A16"].PutValue("- Lý do nộp: ...");
-            ws.Cells.CreateRange("A16", "J16").Merge();
+            ws.Cells.CreateRange("A16", "E16").Merge();
 
             ws.Cells["A18"].PutValue("- Số tiền: " + $"{soTien:N0}đ" + " (Viết bằng chữ): " + Libraries.NumberToVietnameseWords(soTien) + " đồng.");
-            ws.Cells.CreateRange("A18", "J18").Merge();
+            ws.Cells.CreateRange("A18", "E18").Merge();
 
             ws.Cells["A20"].PutValue("- Kèm theo: ..." + " Chứng từ gốc: ...");
-            ws.Cells.CreateRange("A20", "J20").Merge();
+            ws.Cells.CreateRange("A20", "E20").Merge();
 
             // Phần kết (xác thực và trách nhiệm pháp lý)
 
-            ws.Cells["G22"].PutValue("Ngày ... tháng ... năm ...");
-            ws.MergeAndStyle("G22", "J22", styles.CenterItalic);
+            ws.Cells["D22"].PutValue("Ngày ... tháng ... năm ...");
+            ws.MergeAndStyle("D22", "E22", styles.CenterItalic);
 
             ws.Cells["A24"].PutValue("Giám đốc");
-            ws.MergeAndStyle("A24", "B24", styles.CenterBold);
+            ws.Cells["A24"].SetStyle(styles.CenterBold);
 
-            ws.Cells["C24"].PutValue("Kế toán trưởng");
-            ws.MergeAndStyle("C24", "D24", styles.CenterBold);
+            ws.Cells["B24"].PutValue("Kế toán trưởng");
+            ws.Cells["B24"].SetStyle(styles.CenterBold);
 
-            ws.Cells["E24"].PutValue("Người nộp tiền");
-            ws.MergeAndStyle("E24", "F24", styles.CenterBold);
+            ws.Cells["C24"].PutValue("Người nộp tiền");
+            ws.Cells["C24"].SetStyle(styles.CenterBold);
 
-            ws.Cells["G24"].PutValue("Người lập phiếu");
-            ws.MergeAndStyle("G24", "H24", styles.CenterBold);
+            ws.Cells["D24"].PutValue("Người lập phiếu");
+            ws.Cells["D24"].SetStyle(styles.CenterBold);
 
-            ws.Cells["I24"].PutValue("Thủ quỹ");
-            ws.MergeAndStyle("I24", "J24", styles.CenterBold);
+            ws.Cells["E24"].PutValue("Thủ quỹ");
+            ws.Cells["E24"].SetStyle(styles.CenterBold);
 
-            ws.Cells["A25"].PutValue("(Ký, họ tên, đóng dấu)");
-            ws.MergeAndStyle("A25", "B25", styles.CenterItalic);
+            ws.Cells["A25"].PutValue("(Ký, họ tên,\nđóng dấu)");
+            ws.MergeAndStyle("A25", "A26", styles.CenterItalic);
+
+            ws.Cells["B25"].PutValue("(Ký, họ tên)");
+            ws.Cells["B25"].SetStyle(styles.CenterItalic);
 
             ws.Cells["C25"].PutValue("(Ký, họ tên)");
-            ws.MergeAndStyle("C25", "D25", styles.CenterItalic);
+            ws.Cells["C25"].SetStyle(styles.CenterItalic);
+
+            ws.Cells["D25"].PutValue("(Ký, họ tên)");
+            ws.Cells["D25"].SetStyle(styles.CenterItalic);
 
             ws.Cells["E25"].PutValue("(Ký, họ tên)");
-            ws.MergeAndStyle("E25", "F25", styles.CenterItalic);
-
-            ws.Cells["G25"].PutValue("(Ký, họ tên)");
-            ws.MergeAndStyle("G25", "H25", styles.CenterItalic);
-
-            ws.Cells["I25"].PutValue("(Ký, họ tên)");
-            ws.MergeAndStyle("I25", "J25", styles.CenterItalic);
+            ws.Cells["E25"].SetStyle(styles.CenterItalic);
 
             // Đặt độ rộng cột từ A -> H
-            ws.SetColumnWidths(0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10);
+            ws.SetColumnWidths(0, 20, 20, 20, 20, 20);
             // Tự động căn chỉnh chiều cao dòng
             ws.AutoFitAllRows();
 
             // Page setup
             // Tiêu đề lặp lại khi sang trang (Dòng 14 -> 16 gồm Tiêu đề bảng + Dòng kí tự)
-            ws.PageSetup.PrintTitleRows = "$14:$16";
+            ws.PageSetup.PrintTitleRows = "";
             ws.PageSetup.PrintTitleColumns = "";
             // Khổ giấy & Hướng in
             ws.PageSetup.PaperSize = PaperSizeType.PaperA4;
@@ -422,5 +417,249 @@ namespace XuatChungTuKeToan
             ws.PageSetup.SetFooter(2, "Trang: &P/&N");
         }
         #endregion
+        #region "XuatGiayThanhToanTienTamUng"
+        static void XuatGiayThanhToanTienTamUng(Workbook wb, DataTable dt)
+        {
+            Worksheet ws = wb.Worksheets.Add("GiayThanhToanTienTamUng");
+
+            // Khai báo đối tượng để sử dụng các thuộc tính style được định nghĩa
+            var styles = new ExcelReportStyles(wb);
+
+            // Phần mở đầu (thông tin chung)
+
+            ws.Cells["A1"].PutValue("Đơn vị: ...");
+            ws.MergeAndStyle("A1", "B1", styles.Bold);
+
+            ws.Cells["A2"].PutValue("Bộ phận: ...");
+            ws.MergeAndStyle("A2", "B2", styles.Bold);
+
+            ws.Cells["C1"].PutValue("Mẫu số 04 - TT");
+            ws.MergeAndStyle("C1", "D1", styles.CenterBold);
+
+            ws.Cells["C2"].PutValue("(Kèm theo Thông tư số 99/2025/TT-BTC\nngày 27 tháng 10 năm 2025 của Bộ trưởng Bộ Tài chính)");
+            ws.MergeAndStyle("C2", "D3", styles.CenterItalic);
+
+            ws.Cells["A5"].PutValue("GIẤY THANH TOÁN TIỀN TẠM ỨNG");
+            ws.MergeAndStyle("A5", "D5", styles.Title);
+
+            ws.Cells["A6"].PutValue("Ngày ..." + " tháng ..." + " năm ...");
+            ws.MergeAndStyle("A6", "D6", styles.CenterItalic);
+
+            ws.Cells["D7"].PutValue("Số: ...");
+            ws.Cells["D8"].PutValue("Nợ: ...");
+            ws.Cells["D9"].PutValue("Có: ...");
+
+            ws.Cells["A10"].PutValue("- Họ và tên người thanh toán: ...");
+            ws.Cells.CreateRange("A10", "D10").Merge();
+
+            ws.Cells["A11"].PutValue("- Bộ phận (hoặc địa chỉ): ...");
+            ws.Cells.CreateRange("A11", "D11").Merge();
+
+            ws.Cells["A12"].PutValue("- Số tiền tạm ứng được thanh toán theo bảng dưới đây:");
+            ws.Cells.CreateRange("A12", "D12").Merge();
+
+            // Phần nội dung (chi tiết nội dung nghiệp vụ)
+
+            // Tiêu đề bảng
+            int titleRow = 12; // Dòng bắt đầu tiêu đề bảng (index: 12 - tương ứng dòng 13 trong Excel)
+
+            ws.Cells["A13"].PutValue("Diễn giải");
+            ws.MergeAndStyle("A13", "C13", styles.CenterBold);
+
+            ws.Cells["D13"].PutValue("Số tiền");
+            ws.Cells["D13"].SetStyle(styles.CenterBold);
+
+            // Dòng kí tự
+            ws.Cells["A14"].PutValue("A");
+            ws.MergeAndStyle("A14", "C14", styles.Center);
+
+            ws.Cells["D14"].PutValue("1");
+            ws.Cells["D14"].SetStyle(styles.Center);
+
+            int startRow = 14; // Dòng bắt đầu đổ dữ liệu (index: 14 - tương ứng dòng 15 trong Excel)
+            int startCol = 0; // Cột bắt đầu đổ dữ liệu (index: 0 - tương ứng cột A trong Excel)
+            int totalRows = dt.Rows.Count; // Tổng số dòng của DataTable
+            int totalCols = dt.Columns.Count; // Tổng số cột của DataTable
+            int currentRow = startRow; // Dòng hiện tại (dòng bắt đầu đổ dữ liệu)
+
+            if (totalRows > 0)
+            {
+                // Chèn trước số lượng dòng dữ liệu chuẩn bị ghi
+                ws.Cells.InsertRows(startRow, totalRows);
+
+                for(int i = 0; i < totalRows; i++)
+                {
+                    // Lấy từng dòng dữ liệu trong DataTable xử lý
+                    DataRow row = dt.Rows[i];
+
+                    // Ghi Diễn giải vào Cột A & Gộp A -> C
+                    ws.Cells[currentRow, 0].PutValue(row[0]);
+                    ws.Cells.CreateRange(currentRow, 0, 1, 3).Merge();
+                    // Ghi Số tiền vào Cột D
+                    if (row[1] != DBNull.Value && row[1] != null)
+                    {
+                        ws.Cells[currentRow, 3].PutValue(row[1]);
+                    }
+                    currentRow++; // Xuống dòng
+                }
+            }
+
+            // Áp dụng Style theo từng cột cho vùng dữ liệu từ dòng bắt đầu đổ dữ liệu (startRow)
+            ws.SetColumnStyles( startRow, totalRows,
+                // Mảng style truyền trực tiếp theo thứ tự cột:
+                styles.Default,           // Cột A (Diễn giải)
+                null,
+                null,           
+                styles.Number3  // Cột 1 (Số tiền)
+            );
+
+            // Tạo khung cho bảng
+            // Xác định tổng số dòng của toàn bộ Bảng (Dòng hiện tại - Dòng bắt đầu tiêu đề bảng)
+            int totalRowsTable = currentRow - titleRow;
+            if (totalRowsTable > 0)
+            {
+                // Tạo Range cho Bảng
+                Range tableRange = ws.Cells.CreateRange(titleRow, startCol, totalRowsTable, totalCols + 2);
+                // Kẻ khung theo Range
+                tableRange.SetTableBorders();
+            }
+
+            // Phần kết (xác thực và trách nhiệm pháp lý)
+
+            currentRow += 2;
+            ws.Cells["A" + currentRow].PutValue("Giám đốc");
+            ws.Cells["A" + currentRow].SetStyle(styles.CenterBold);
+
+            ws.Cells["B" + currentRow].PutValue("Kế toán trưởng");
+            ws.Cells["B" + currentRow].SetStyle(styles.CenterBold);
+
+            ws.Cells["C" + currentRow].PutValue("Kế toán thanh toán");
+            ws.Cells["C" + currentRow].SetStyle(styles.CenterBold);
+
+            ws.Cells["D" + currentRow].PutValue("Người đề nghị");
+            ws.Cells["D" + currentRow].SetStyle(styles.CenterBold);
+
+            currentRow++;
+            ws.Cells["A" + currentRow].PutValue("(Ký, họ tên)");
+            ws.Cells["A" + currentRow].SetStyle(styles.CenterItalic);
+
+            ws.Cells["B" + currentRow].PutValue("(Ký, họ tên)");
+            ws.Cells["B" + currentRow].SetStyle(styles.CenterItalic);
+
+            ws.Cells["C" + currentRow].PutValue("(Ký, họ tên)");
+            ws.Cells["C" + currentRow].SetStyle(styles.CenterItalic);
+
+            ws.Cells["D" + currentRow].PutValue("thanh toán");
+            ws.Cells["D" + currentRow].SetStyle(styles.CenterBold);
+
+            currentRow++;
+            ws.Cells["D" + currentRow].PutValue("(Ký, họ tên)");
+            ws.Cells["D" + currentRow].SetStyle(styles.CenterItalic);
+
+            // Đặt độ rộng cột từ A -> H
+            ws.SetColumnWidths(startCol, 20, 20, 25, 30);
+            // Tự động căn chỉnh chiều cao dòng
+            ws.AutoFitAllRows();
+
+            // Page setup
+            // Tiêu đề lặp lại khi sang trang (Dòng 14 -> 16 gồm Tiêu đề bảng + Dòng kí tự)
+            ws.PageSetup.PrintTitleRows = "$13:$14";
+            ws.PageSetup.PrintTitleColumns = "";
+            // Khổ giấy & Hướng in
+            ws.PageSetup.PaperSize = PaperSizeType.PaperA4;
+            ws.PageSetup.Orientation = PageOrientationType.Portrait; // Khổ dọc
+            // Căn lề an toàn cho máy in (Đơn vị inch)
+            ws.PageSetup.LeftMarginInch = 0.3;
+            ws.PageSetup.RightMarginInch = 0.3;
+            ws.PageSetup.TopMarginInch = 0.4;
+            ws.PageSetup.BottomMarginInch = 0.5;
+            ws.PageSetup.HeaderMarginInch = 0.2;
+            ws.PageSetup.FooterMarginInch = 0.2;
+            // Căn giữa trang in theo chiều ngang
+            ws.PageSetup.CenterHorizontally = true;
+            // Khóa vừa 1 trang chiều rộng, chiều dài cuộn tự do
+            ws.PageSetup.FitToPagesWide = 1;
+            ws.PageSetup.FitToPagesTall = 0;
+            // Đánh số trang góc dưới bên phải (Ví dụ: Trang: 1/3)
+            ws.PageSetup.SetFooter(2, "Trang: &P/&N");
+        }
+        #endregion
+        #region "GiayThanhToanTienTamUngDataForTesting"
+        public static DataTable GiayThanhToanTienTamUngDataForTesting()
+        {
+            DataTable dt = new DataTable("GiayThanhToanTamUng");
+            dt.Columns.Add("DienGiai", typeof(string));
+            dt.Columns.Add("SoTien", typeof(object)); // Dùng object để hỗ trợ nạp decimal hoặc DBNull.Value
+
+            // ==========================================
+            // 1. KHỞI TẠO DỮ LIỆU ĐỘNG (Từ CSDL / API)
+            // ==========================================
+            decimal soTamUngKyTruoc = 2500000m;
+
+            // Danh sách N Phiếu chi tạm ứng (ĐỘNG)
+            var dsPhieuChiTamUng = new[]
+            {
+                new { SoPhieu = "PC001/10", Ngay = "05/10/2026", SoTien = 5000000m, NoiDung = "Tạm ứng đợt 1 đi công tác" },
+                new { SoPhieu = "PC008/10", Ngay = "12/10/2026", SoTien = 3000000m, NoiDung = "Tạm ứng đợt 2 mua vé máy bay" },
+                new { SoPhieu = "PC015/10", Ngay = "18/10/2026", SoTien = 1500000m, NoiDung = "Tạm ứng bổ sung chi phí xe bãi" }
+            };
+
+            // Danh sách M Chứng từ chi thực tế (ĐỘNG)
+            var dsChungTuChi = new[]
+            {
+                new { SoChungTu = "HD0123", Ngay = "15/10/2026", SoTien = 4200000m, NoiDung = "Vé máy bay khứ hồi Hà Nội - TP.HCM" },
+                new { SoChungTu = "HD0456", Ngay = "18/10/2026", SoTien = 3500000m, NoiDung = "Tiền phòng khách sạn 3 đêm" },
+                new { SoChungTu = "HD0789", Ngay = "19/10/2026", SoTien = 1800000m, NoiDung = "Tiền tiếp khách đối tác" },
+                new { SoChungTu = "BL0012", Ngay = "20/10/2026", SoTien = 650000m, NoiDung = "Cước Taxi di chuyển công tác" },
+                new { SoChungTu = "HD0999", Ngay = "21/10/2026", SoTien = 450000m, NoiDung = "In ấn tài liệu hội thảo" }
+            };
+
+            // ==========================================
+            // 2. TÍNH TOÁN NGHIỆP VỤ TỔNG CỘNG
+            // ==========================================
+            decimal tongPhieuChiKyNay = dsPhieuChiTamUng.Sum(x => x.SoTien);
+            decimal tongMucI = soTamUngKyTruoc + tongPhieuChiKyNay; // Total I = 12,000,000
+
+            decimal tongMucII = dsChungTuChi.Sum(x => x.SoTien); // Total II = 10,600,000
+
+            decimal chenhLech = tongMucI - tongMucII; // 1,400,000 (Dương -> Chi không hết)
+            decimal tamUngChiKhongHet = chenhLech > 0 ? chenhLech : 0m;
+            decimal chiQuaTamUng = chenhLech < 0 ? Math.Abs(chenhLech) : 0m;
+
+            // ==========================================
+            // 3. ĐỔ DỮ LIỆU VÀO DATATABLE THEO TUYẾN TÍNH
+            // ==========================================
+
+            // --- MỤC I: SỐ TIỀN TẠM ỨNG ---
+            dt.Rows.Add("I. Số tiền tạm ứng", tongMucI);
+            dt.Rows.Add("   1. Số tạm ứng các kỳ trước chưa chi hết", soTamUngKyTruoc);
+            dt.Rows.Add("   2. Số tạm ứng kỳ này:", DBNull.Value);
+
+            // Vòng lặp đổ danh sách N phiếu chi tạm ứng
+            foreach (var pc in dsPhieuChiTamUng)
+            {
+                dt.Rows.Add($"      - Phiếu chi số {pc.SoPhieu} ngày {pc.Ngay}", pc.SoTien);
+            }
+
+            // --- MỤC II: SỐ TIỀN ĐÃ CHI ---
+            dt.Rows.Add("II. Số tiền đã chi", tongMucII);
+
+            // Vòng lặp đổ danh sách M chứng từ chi thực tế
+            int stt = 1;
+            foreach (var ct in dsChungTuChi)
+            {
+                dt.Rows.Add($"   {stt}. Chứng từ số {ct.SoChungTu} ngày {ct.Ngay} ({ct.NoiDung})", ct.SoTien);
+                stt++;
+            }
+
+            // --- MỤC III: CHÊNH LỆCH ---
+            dt.Rows.Add("III. Chênh lệch", DBNull.Value);
+            dt.Rows.Add("   1. Số tạm ứng chi không hết ( I - II )", tamUngChiKhongHet > 0 ? tamUngChiKhongHet : (object)DBNull.Value);
+            dt.Rows.Add("   2. Chi quá số tạm ứng ( II - I )", chiQuaTamUng > 0 ? chiQuaTamUng : (object)DBNull.Value);
+
+            return dt;
+        }
+        #endregion
     }
 }
+    
